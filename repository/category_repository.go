@@ -2,16 +2,17 @@ package repository
 
 import (
 	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
+	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
 )
 
 type CategoryRepository interface {
 	Insert(request *entity.Category) (bool, error)
 
-	FindAll() (*[]entity.Category, error)
+	FindAll() (*[]model.CategoryResponse, error)
 
-	FindAllSoftDeleted() (*[]entity.Category, error)
+	FindAllSoftDeleted() (*[]model.CategoryResponse, error)
 
-	FindByID(categoryID int64) (*entity.Category, error)
+	FindByID(categoryID int64) (*model.CategoryResponse, error)
 
 	Update(categoryID int64, request *entity.Category) (bool, error)
 

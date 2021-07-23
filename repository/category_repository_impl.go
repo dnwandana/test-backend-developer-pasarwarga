@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
+	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
 )
 
 type CategoryRepositoryImpl struct {
@@ -27,7 +28,7 @@ func (r *CategoryRepositoryImpl) Insert(request *entity.Category) (bool, error) 
 	return true, nil
 }
 
-func (r *CategoryRepositoryImpl) FindAll() (*[]entity.Category, error) {
+func (r *CategoryRepositoryImpl) FindAll() (*[]model.CategoryResponse, error) {
 	query := "SELECT * FROM categories WHERE deleted_at IS NULL"
 	rows, e1 := r.DB.QueryContext(context.Background(), query)
 	if e1 != nil {
@@ -35,9 +36,9 @@ func (r *CategoryRepositoryImpl) FindAll() (*[]entity.Category, error) {
 	}
 
 	defer rows.Close()
-	var categories []entity.Category
+	var categories []model.CategoryResponse
 	if rows.Next() {
-		category := entity.Category{}
+		category := model.CategoryResponse{}
 		e2 := rows.Scan(
 			&category.ID,
 			&category.CategoryName,
@@ -58,7 +59,7 @@ func (r *CategoryRepositoryImpl) FindAll() (*[]entity.Category, error) {
 	return nil, nil
 }
 
-func (r *CategoryRepositoryImpl) FindAllSoftDeleted() (*[]entity.Category, error) {
+func (r *CategoryRepositoryImpl) FindAllSoftDeleted() (*[]model.CategoryResponse, error) {
 	query := "SELECT * FROM categories WHERE deleted_at IS NOT NULL"
 	rows, e1 := r.DB.QueryContext(context.Background(), query)
 	if e1 != nil {
@@ -66,9 +67,9 @@ func (r *CategoryRepositoryImpl) FindAllSoftDeleted() (*[]entity.Category, error
 	}
 
 	defer rows.Close()
-	var categories []entity.Category
+	var categories []model.CategoryResponse
 	if rows.Next() {
-		category := entity.Category{}
+		category := model.CategoryResponse{}
 		e2 := rows.Scan(
 			&category.ID,
 			&category.CategoryName,
@@ -89,7 +90,7 @@ func (r *CategoryRepositoryImpl) FindAllSoftDeleted() (*[]entity.Category, error
 	return nil, nil
 }
 
-func (r *CategoryRepositoryImpl) FindByID(categoryID int64) (*entity.Category, error) {
+func (r *CategoryRepositoryImpl) FindByID(categoryID int64) (*model.CategoryResponse, error) {
 	query := "SELECT * FROM categories WHERE id = ?"
 	rows, e1 := r.DB.QueryContext(context.Background(), query, categoryID)
 	if e1 != nil {
@@ -98,7 +99,7 @@ func (r *CategoryRepositoryImpl) FindByID(categoryID int64) (*entity.Category, e
 
 	defer rows.Close()
 	if rows.Next() {
-		category := entity.Category{}
+		category := model.CategoryResponse{}
 		e2 := rows.Scan(
 			&category.ID,
 			&category.CategoryName,

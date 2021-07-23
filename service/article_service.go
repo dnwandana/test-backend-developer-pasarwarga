@@ -1,22 +1,21 @@
 package service
 
 import (
-	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
 )
 
 type ArticleService interface {
-	Create(request *entity.Article)
+	Create(request *model.ArticleCreateRequest)
 
 	List() *[]model.ArticleResponse
 
 	ListSoftDeleted() *[]model.ArticleResponse
 
-	FindOne(articleID int64)
+	FindOne(articleID string) *model.ArticleResponse
 
-	Update(articleID int64, request *entity.Category)
+	Update(articleID string, request *model.ArticleUpdateRequest)
 
-	SoftDelete(articleID int64)
+	SoftDelete(articleID string)
 
-	Delete(articleID int64)
+	Delete(articleID string)
 }

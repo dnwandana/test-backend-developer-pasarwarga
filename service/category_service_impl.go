@@ -4,42 +4,80 @@ import (
 	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/repository"
+	"github.com/dnwandana/test-backend-developer-pasarwarga/util"
+	"github.com/gosimple/slug"
+	"strconv"
 )
 
 type CategoryServiceImpl struct {
-	categoryRepository *repository.CategoryRepository
+	categoryRepository repository.CategoryRepository
 }
 
 func NewCategoryService(repo *repository.CategoryRepository) CategoryService {
 	return &CategoryServiceImpl{
-		categoryRepository: repo,
+		categoryRepository: *repo,
 	}
 }
 
-func (service *CategoryServiceImpl) Create(request *entity.Category) {
-	panic("implement me")
+func (service *CategoryServiceImpl) Create(request *model.CategoryCreateRequest) {
+	categorySlug := slug.Make(request.CategoryName)
+	article := entity.Category{
+		CategoryName: request.CategoryName,
+		CategorySlug: categorySlug,
+	}
+	_, txErr := service.categoryRepository.Insert(&article)
+	util.ReturnErrorIfNeeded(txErr)
 }
 
 func (service *CategoryServiceImpl) List() *[]model.CategoryResponse {
-	panic("implement me")
+	categories, txErr := service.categoryRepository.FindAll()
+	util.ReturnErrorIfNeeded(txErr)
+	return categories
 }
 
 func (service *CategoryServiceImpl) ListSoftDeleted() *[]model.CategoryResponse {
-	panic("implement me")
+	categories, txErr := service.categoryRepository.FindAllSoftDeleted()
+	util.ReturnErrorIfNeeded(txErr)
+	return categories
 }
 
-func (service *CategoryServiceImpl) FindOne(categoryID int64) {
-	panic("implement me")
+func (service *CategoryServiceImpl) FindOne(categoryID string) *model.CategoryResponse {
+	id, err := strconv.Atoi(categoryID)
+	util.ReturnErrorIfNeeded(err)
+
+	category, txErr := service.categoryRepository.FindByID(int64(id))
+	util.ReturnErrorIfNeeded(txErr)
+
+	return category
 }
 
-func (service *CategoryServiceImpl) Update(categoryID int64, request *entity.Category) {
-	panic("implement me")
+func (service *CategoryServiceImpl) Update(categoryID string, request *model.CategoryUpdateRequest) {
+	id, err := strconv.Atoi(categoryID)
+	util.ReturnErrorIfNeeded(err)
+
+	categorySlug := slug.Make(request.CategoryName)
+
+	category := entity.Category{
+		CategoryName: request.CategoryName,
+		CategorySlug: categorySlug,
+	}
+
+	_, txErr := service.categoryRepository.Update(int64(id), &category)
+	util.ReturnErrorIfNeeded(txErr)
 }
 
-func (service *CategoryServiceImpl) SoftDelete(categoryID int64) {
-	panic("implement me")
+func (service *CategoryServiceImpl) SoftDelete(categoryID string) {
+	id, err := strconv.Atoi(categoryID)
+	util.ReturnErrorIfNeeded(err)
+
+	_, txErr := service.categoryRepository.SoftDelete(int64(id))
+	util.ReturnErrorIfNeeded(txErr)
 }
 
-func (service *CategoryServiceImpl) Delete(categoryID int64) {
-	panic("implement me")
+func (service *CategoryServiceImpl) Delete(categoryID string) {
+	id, err := strconv.Atoi(categoryID)
+	util.ReturnErrorIfNeeded(err)
+
+	_, txErr := service.categoryRepository.Delete(int64(id))
+	util.ReturnErrorIfNeeded(txErr)
 }

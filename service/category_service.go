@@ -1,22 +1,21 @@
 package service
 
 import (
-	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
 )
 
 type CategoryService interface {
-	Create(request *entity.Category)
+	Create(request *model.CategoryCreateRequest)
 
 	List() *[]model.CategoryResponse
 
 	ListSoftDeleted() *[]model.CategoryResponse
 
-	FindOne(categoryID int64)
+	FindOne(categoryID string) *model.CategoryResponse
 
-	Update(categoryID int64, request *entity.Category)
+	Update(categoryID string, request *model.CategoryUpdateRequest)
 
-	SoftDelete(categoryID int64)
+	SoftDelete(categoryID string)
 
-	Delete(categoryID int64)
+	Delete(categoryID string)
 }

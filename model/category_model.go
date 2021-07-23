@@ -7,12 +7,10 @@ import (
 
 type CategoryCreateRequest struct {
 	CategoryName string `json:"category_name"`
-	CategorySlug string `json:"category_slug"`
 }
 
 type CategoryUpdateRequest struct {
 	CategoryName string `json:"category_name"`
-	CategorySlug string `json:"category_slug"`
 }
 
 type CategoryResponse struct {

@@ -131,39 +131,6 @@ func (r *ArticleRepositoryImpl) FindByID(articleID int64) (*model.ArticleRespons
 	return nil, nil
 }
 
-func (r *ArticleRepositoryImpl) FindBySlug(articleSlug string) (*model.ArticleResponse, error) {
-	query := `SELECT a.id, a.title, a.slug, c.id AS category_id, c.category_name, c.category_slug, a.created_at, a.updated_at, a.deleted_at
-				FROM articles AS a INNER JOIN categories AS c on a.category_id = c.id WHERE a.slug = ?`
-	rows, e1 := r.DB.QueryContext(context.Background(), query, articleSlug)
-	if e1 != nil {
-		return nil, e1
-	}
-
-	defer rows.Close()
-	if rows.Next() {
-		article := model.ArticleResponse{}
-		e2 := rows.Scan(
-			&article.ID,
-			&article.Title,
-			&article.Slug,
-			&article.CategoryID,
-			&article.CategoryName,
-			&article.CategorySlug,
-			&article.CreatedAt,
-			&article.UpdatedAt,
-			&article.DeletedAt,
-		)
-
-		if e2 != nil {
-			return nil, e2
-		}
-
-		return &article, nil
-	}
-
-	return nil, nil
-}
-
 func (r *ArticleRepositoryImpl) Update(articleID int64, request *entity.Article) (bool, error) {
 	query := "UPDATE articles SET title = ?, slug = ? , category_id = ?, content = ? WHERE id = ?"
 	result, e1 := r.DB.ExecContext(context.Background(), query, request.Title, request.Slug, request.CategoryID, request.Content, articleID)

@@ -14,8 +14,6 @@ type ArticleRepository interface {
 
 	FindByID(articleID int64) (*model.ArticleResponse, error)
 
-	FindBySlug(articleSlug string) (*model.ArticleResponse, error)
-
 	Update(articleID int64, request *entity.Article) (bool, error)
 
 	SoftDelete(articleID int64) (bool, error)

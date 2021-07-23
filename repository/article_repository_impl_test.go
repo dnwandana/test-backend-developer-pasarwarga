@@ -103,20 +103,6 @@ func TestArticleRepositoryImpl_FindByID(t *testing.T) {
 	})
 }
 
-func TestArticleRepositoryImpl_FindBySlug(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		result, txErr := NewArticleRepository(database.GetConnection()).FindBySlug("tutorial-install-docker")
-		assert.Nil(t, txErr)
-		assert.NotNil(t, result)
-	})
-
-	t.Run("Fail", func(t *testing.T) {
-		result, txErr := NewArticleRepository(database.GetConnection()).FindBySlug("no-slug")
-		assert.Error(t, txErr)
-		assert.Nil(t, result)
-	})
-}
-
 func TestArticleRepositoryImpl_Update(t *testing.T) {
 	type args struct {
 		articleID int64

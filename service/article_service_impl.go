@@ -37,6 +37,12 @@ func (service *ArticleServiceImpl) List() *[]model.ArticleResponse {
 	return articles
 }
 
+func (service *ArticleServiceImpl) ListByTitle(title string) *[]model.ArticleResponse {
+	articles, txErr := service.articleRepository.FindAllByTitle(title)
+	util.ReturnErrorIfNeeded(txErr)
+	return articles
+}
+
 func (service *ArticleServiceImpl) ListSoftDeleted() *[]model.ArticleResponse {
 	articles, txErr := service.articleRepository.FindAllSoftDeleted()
 	util.ReturnErrorIfNeeded(txErr)

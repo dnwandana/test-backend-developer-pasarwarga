@@ -41,7 +41,16 @@ func (controller *ArticleController) Create(ctx *fiber.Ctx) error {
 }
 
 func (controller *ArticleController) List(ctx *fiber.Ctx) error {
-	articles := controller.ArticleService.List()
+	title := ctx.Query("title")
+
+	var articles *[]model.ArticleResponse
+
+	if title != "" {
+		articles = controller.ArticleService.ListByTitle(title)
+	} else {
+		articles = controller.ArticleService.List()
+	}
+
 	return ctx.Status(fiber.StatusOK).JSON(model.SuccessResponse{
 		StatusCode: fiber.StatusOK,
 		Data:       articles,

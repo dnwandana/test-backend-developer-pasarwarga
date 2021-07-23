@@ -9,6 +9,8 @@ type ArticleService interface {
 
 	List() *[]model.ArticleResponse
 
+	ListByTitle(title string) *[]model.ArticleResponse
+
 	ListSoftDeleted() *[]model.ArticleResponse
 
 	FindOne(articleID string) *model.ArticleResponse

@@ -10,6 +10,8 @@ type ArticleRepository interface {
 
 	FindAll() (*[]model.ArticleResponse, error)
 
+	FindAllByTitle(title string) (*[]model.ArticleResponse, error)
+
 	FindAllSoftDeleted() (*[]model.ArticleResponse, error)
 
 	FindByID(articleID int64) (*model.ArticleResponse, error)

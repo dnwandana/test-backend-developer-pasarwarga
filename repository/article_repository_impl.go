@@ -63,6 +63,40 @@ func (r *ArticleRepositoryImpl) FindAll() (*[]model.ArticleResponse, error) {
 	return nil, nil
 }
 
+func (r *ArticleRepositoryImpl) FindAllByTitle(title string) (*[]model.ArticleResponse, error) {
+	query := "SELECT a.id, a.title, a.slug, c.id AS category_id, c.category_name, c.category_slug, a.created_at, a.updated_at, a.deleted_at FROM articles AS a INNER JOIN categories AS c on a.category_id = c.id WHERE a.title LIKE '%" + title + "%' AND a.deleted_at IS NULL"
+	rows, e1 := r.DB.QueryContext(context.Background(), query)
+	if e1 != nil {
+		return nil, e1
+	}
+
+	defer rows.Close()
+	var articles []model.ArticleResponse
+	if rows.Next() {
+		article := model.ArticleResponse{}
+		e2 := rows.Scan(
+			&article.ID,
+			&article.Title,
+			&article.Slug,
+			&article.CategoryID,
+			&article.CategoryName,
+			&article.CategorySlug,
+			&article.CreatedAt,
+			&article.UpdatedAt,
+			&article.DeletedAt,
+		)
+
+		if e2 != nil {
+			return nil, e2
+		}
+
+		articles = append(articles, article)
+		return &articles, nil
+	}
+
+	return nil, nil
+}
+
 func (r *ArticleRepositoryImpl) FindAllSoftDeleted() (*[]model.ArticleResponse, error) {
 	query := `SELECT a.id, a.title, a.slug, c.id AS category_id, c.category_name, c.category_slug, a.created_at, a.updated_at, a.deleted_at
 				FROM articles AS a INNER JOIN categories AS c on a.category_id = c.id WHERE a.deleted_at IS NOT NULL`

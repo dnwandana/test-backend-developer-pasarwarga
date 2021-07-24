@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
+	"strings"
 )
 
 type ArticleRepositoryImpl struct {
@@ -64,8 +65,10 @@ func (r *ArticleRepositoryImpl) FindAll() (*[]model.ArticleResponse, error) {
 }
 
 func (r *ArticleRepositoryImpl) FindAllByTitle(title string) (*[]model.ArticleResponse, error) {
-	query := "SELECT a.id, a.title, a.slug, c.id AS category_id, c.category_name, c.category_slug, a.created_at, a.updated_at, a.deleted_at FROM articles AS a INNER JOIN categories AS c on a.category_id = c.id WHERE a.title LIKE '%" + title + "%' AND a.deleted_at IS NULL"
-	rows, e1 := r.DB.QueryContext(context.Background(), query)
+	filter := strings.ToLower(title)
+	query := `SELECT a.id, a.title, a.slug, c.id AS category_id, c.category_name, c.category_slug, a.created_at, a.updated_at, a.deleted_at
+				FROM articles AS a INNER JOIN categories AS c on a.category_id = c.id WHERE a.title REGEXP ? AND a.deleted_at IS NULL`
+	rows, e1 := r.DB.QueryContext(context.Background(), query, filter)
 	if e1 != nil {
 		return nil, e1
 	}

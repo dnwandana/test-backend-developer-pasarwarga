@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -12,6 +11,6 @@ type Article struct {
 	CategoryID int64
 	Content    string
 	CreatedAt  time.Time
-	UpdatedAt  sql.NullTime
-	DeletedAt  sql.NullTime
+	UpdatedAt  time.Time
+	DeletedAt  time.Time
 }

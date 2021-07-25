@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -10,6 +9,6 @@ type Category struct {
 	CategoryName string
 	CategorySlug string
 	CreatedAt    time.Time
-	UpdatedAt    sql.NullTime
-	DeletedAt    sql.NullTime
+	UpdatedAt    time.Time
+	DeletedAt    time.Time
 }

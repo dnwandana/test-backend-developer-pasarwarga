@@ -27,7 +27,7 @@ func (service *ArticleServiceImpl) Create(request *model.ArticleCreateRequest) {
 		CategoryID: request.CategoryID,
 		Content:    request.Content,
 	}
-	_, txErr := service.articleRepository.Insert(&article)
+	txErr := service.articleRepository.Insert(&article)
 	util.ReturnErrorIfNeeded(txErr)
 }
 
@@ -72,7 +72,7 @@ func (service *ArticleServiceImpl) Update(articleID string, request *model.Artic
 		Content:    request.Content,
 	}
 
-	_, txErr := service.articleRepository.Update(int64(id), &article)
+	txErr := service.articleRepository.Update(int64(id), &article)
 	util.ReturnErrorIfNeeded(txErr)
 }
 
@@ -80,7 +80,7 @@ func (service *ArticleServiceImpl) SoftDelete(articleID string) {
 	id, err := strconv.Atoi(articleID)
 	util.ReturnErrorIfNeeded(err)
 
-	_, txErr := service.articleRepository.SoftDelete(int64(id))
+	txErr := service.articleRepository.SoftDelete(int64(id))
 	util.ReturnErrorIfNeeded(txErr)
 }
 
@@ -88,6 +88,6 @@ func (service *ArticleServiceImpl) Delete(articleID string) {
 	id, err := strconv.Atoi(articleID)
 	util.ReturnErrorIfNeeded(err)
 
-	_, txErr := service.articleRepository.Delete(int64(id))
+	txErr := service.articleRepository.Delete(int64(id))
 	util.ReturnErrorIfNeeded(txErr)
 }

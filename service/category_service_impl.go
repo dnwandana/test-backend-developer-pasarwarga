@@ -25,7 +25,7 @@ func (service *CategoryServiceImpl) Create(request *model.CategoryCreateRequest)
 		CategoryName: request.CategoryName,
 		CategorySlug: categorySlug,
 	}
-	_, txErr := service.categoryRepository.Insert(&article)
+	txErr := service.categoryRepository.Insert(&article)
 	util.ReturnErrorIfNeeded(txErr)
 }
 
@@ -62,7 +62,7 @@ func (service *CategoryServiceImpl) Update(categoryID string, request *model.Cat
 		CategorySlug: categorySlug,
 	}
 
-	_, txErr := service.categoryRepository.Update(int64(id), &category)
+	txErr := service.categoryRepository.Update(int64(id), &category)
 	util.ReturnErrorIfNeeded(txErr)
 }
 
@@ -70,7 +70,7 @@ func (service *CategoryServiceImpl) SoftDelete(categoryID string) {
 	id, err := strconv.Atoi(categoryID)
 	util.ReturnErrorIfNeeded(err)
 
-	_, txErr := service.categoryRepository.SoftDelete(int64(id))
+	txErr := service.categoryRepository.SoftDelete(int64(id))
 	util.ReturnErrorIfNeeded(txErr)
 }
 
@@ -78,6 +78,6 @@ func (service *CategoryServiceImpl) Delete(categoryID string) {
 	id, err := strconv.Atoi(categoryID)
 	util.ReturnErrorIfNeeded(err)
 
-	_, txErr := service.categoryRepository.Delete(int64(id))
+	txErr := service.categoryRepository.Delete(int64(id))
 	util.ReturnErrorIfNeeded(txErr)
 }

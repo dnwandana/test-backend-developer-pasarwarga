@@ -23,34 +23,41 @@ var (
 	dbUser = os.Getenv("DB_USER")
 	dbPass = os.Getenv("DB_PASS")
 	dbName = os.Getenv("DB_NAME")
+	Connection *sql.DB
 )
 
-func main() {
-	// get connection
+// initialize database connection
+func init() {
+	var err error
 	dbUri := fmt.Sprintf("%s:%s@(%s:%s)/%s?parseTime=true", dbUser, dbPass, dbHost, dbPort, dbName)
-	connection, err := sql.Open("mysql", dbUri)
+
+	// open connection
+	Connection, err = sql.Open("mysql", dbUri)
 	if err != nil {
 		panic(err)
 	}
 
-	err = connection.Ping()
+	// check connection
+	err = Connection.Ping()
 	if err != nil {
 		panic(err)
 	}
 
 	// set connection pool
-	connection.SetMaxIdleConns(5)
-	connection.SetMaxOpenConns(100)
-	connection.SetConnMaxIdleTime(5 * time.Minute)
-	connection.SetConnMaxLifetime(60 * time.Minute)
+	Connection.SetMaxIdleConns(5)
+	Connection.SetMaxOpenConns(100)
+	Connection.SetConnMaxIdleTime(5 * time.Minute)
+	Connection.SetConnMaxLifetime(60 * time.Minute)
+}
 
+func main() {
 	// setup article repository, service, and controller
-	articleRepository := repository.NewArticleRepository(connection)
+	articleRepository := repository.NewArticleRepository(Connection)
 	articleService := service.NewArticleService(&articleRepository)
 	articleController := controller.NewArticleController(&articleService)
 
 	// setup category repository, service, and controller
-	categoryRepository := repository.NewCategoryRepository(connection)
+	categoryRepository := repository.NewCategoryRepository(Connection)
 	categoryService := service.NewCategoryService(&categoryRepository)
 	categoryController := controller.NewCategoryController(&categoryService)
 
@@ -78,5 +85,6 @@ func main() {
 	articleController.SetupRoutes(app)
 	categoryController.SetupRoutes(app)
 
+	// listen to port 5000
 	log.Fatal(app.Listen(":5000"))
 }

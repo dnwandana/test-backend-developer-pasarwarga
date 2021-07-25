@@ -6,7 +6,7 @@ import (
 )
 
 type CategoryRepository interface {
-	Insert(request *entity.Category) (bool, error)
+	Insert(request *entity.Category) error
 
 	FindAll() (*[]model.CategoryResponse, error)
 
@@ -14,9 +14,9 @@ type CategoryRepository interface {
 
 	FindByID(categoryID int64) (*model.CategoryResponse, error)
 
-	Update(categoryID int64, request *entity.Category) (bool, error)
+	Update(categoryID int64, request *entity.Category) error
 
-	SoftDelete(categoryID int64) (bool, error)
+	SoftDelete(categoryID int64) error
 
-	Delete(categoryID int64) (bool, error)
+	Delete(categoryID int64) error
 }

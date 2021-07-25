@@ -6,7 +6,7 @@ import (
 )
 
 type ArticleRepository interface {
-	Insert(request *entity.Article) (bool, error)
+	Insert(request *entity.Article) error
 
 	FindAll() (*[]model.ArticleResponse, error)
 
@@ -16,9 +16,9 @@ type ArticleRepository interface {
 
 	FindByID(articleID int64) (*model.ArticleResponse, error)
 
-	Update(articleID int64, request *entity.Article) (bool, error)
+	Update(articleID int64, request *entity.Article) error
 
-	SoftDelete(articleID int64) (bool, error)
+	SoftDelete(articleID int64) error
 
-	Delete(articleID int64) (bool, error)
+	Delete(articleID int64) error
 }

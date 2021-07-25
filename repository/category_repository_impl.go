@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/entity"
 	"github.com/dnwandana/test-backend-developer-pasarwarga/model"
+	"time"
 )
 
 type CategoryRepositoryImpl struct {
@@ -18,99 +19,160 @@ func NewCategoryRepository(db *sql.DB) CategoryRepository {
 	}
 }
 
-func (r *CategoryRepositoryImpl) Insert(request *entity.Category) (bool, error) {
+func (r *CategoryRepositoryImpl) Insert(request *entity.Category) error {
 	query := "INSERT INTO categories (category_name, category_slug) VALUES (?, ?)"
-	_, txErr := r.DB.ExecContext(context.Background(), query, request.CategoryName, request.CategorySlug)
-	if txErr != nil {
-		return false, txErr
+	result, err1 := r.DB.ExecContext(context.Background(), query, request.CategoryName, request.CategorySlug)
+	if err1 != nil {
+		return err1
 	}
 
-	return true, nil
+	affected, err2 := result.RowsAffected()
+	if err2 != nil {
+		return err2
+	}
+
+	if affected != 1 {
+		return errors.New("no category saved")
+	}
+
+	return nil
 }
 
 func (r *CategoryRepositoryImpl) FindAll() (*[]model.CategoryResponse, error) {
 	query := "SELECT * FROM categories WHERE deleted_at IS NULL"
-	rows, e1 := r.DB.QueryContext(context.Background(), query)
-	if e1 != nil {
-		return nil, e1
+	rows, err1 := r.DB.QueryContext(context.Background(), query)
+	if err1 != nil {
+		return nil, err1
 	}
 
 	defer rows.Close()
 	var categories []model.CategoryResponse
-	if rows.Next() {
-		category := model.CategoryResponse{}
-		e2 := rows.Scan(
-			&category.ID,
-			&category.CategoryName,
-			&category.CategorySlug,
-			&category.CreatedAt,
-			&category.UpdatedAt,
-			&category.DeletedAt,
+	for rows.Next() {
+		var id int64
+		var categoryName, categorySlug string
+		var createdAt time.Time
+		var updatedAt, deletedAt sql.NullTime
+		err2 := rows.Scan(
+			&id,
+			&categoryName,
+			&categorySlug,
+			&createdAt,
+			&updatedAt,
+			&deletedAt,
 		)
 
-		if e2 != nil {
-			return nil, e2
+		if err2 != nil {
+			return nil, err2
+		}
+
+		category := model.CategoryResponse{
+			ID:           id,
+			CategoryName: categoryName,
+			CategorySlug: categorySlug,
+			CreatedAt:    createdAt,
+		}
+
+		if updatedAt.Valid {
+			category.UpdatedAt = updatedAt.Time
+		}
+
+		if deletedAt.Valid {
+			category.DeletedAt = deletedAt.Time
 		}
 
 		categories = append(categories, category)
-		return &categories, nil
 	}
 
-	return nil, nil
+	return &categories, nil
 }
 
 func (r *CategoryRepositoryImpl) FindAllSoftDeleted() (*[]model.CategoryResponse, error) {
 	query := "SELECT * FROM categories WHERE deleted_at IS NOT NULL"
-	rows, e1 := r.DB.QueryContext(context.Background(), query)
-	if e1 != nil {
-		return nil, e1
+	rows, err1 := r.DB.QueryContext(context.Background(), query)
+	if err1 != nil {
+		return nil, err1
 	}
 
 	defer rows.Close()
 	var categories []model.CategoryResponse
-	if rows.Next() {
-		category := model.CategoryResponse{}
-		e2 := rows.Scan(
-			&category.ID,
-			&category.CategoryName,
-			&category.CategorySlug,
-			&category.CreatedAt,
-			&category.UpdatedAt,
-			&category.DeletedAt,
+	for rows.Next() {
+		var id int64
+		var categoryName, categorySlug string
+		var createdAt time.Time
+		var updatedAt, deletedAt sql.NullTime
+		err2 := rows.Scan(
+			&id,
+			&categoryName,
+			&categorySlug,
+			&createdAt,
+			&updatedAt,
+			&deletedAt,
 		)
 
-		if e2 != nil {
-			return nil, e2
+		if err2 != nil {
+			return nil, err2
+		}
+
+		category := model.CategoryResponse{
+			ID:           id,
+			CategoryName: categoryName,
+			CategorySlug: categorySlug,
+			CreatedAt:    createdAt,
+		}
+
+		if updatedAt.Valid {
+			category.UpdatedAt = updatedAt.Time
+		}
+
+		if deletedAt.Valid {
+			category.DeletedAt = deletedAt.Time
 		}
 
 		categories = append(categories, category)
-		return &categories, nil
 	}
 
-	return nil, nil
+	return &categories, nil
 }
 
 func (r *CategoryRepositoryImpl) FindByID(categoryID int64) (*model.CategoryResponse, error) {
 	query := "SELECT * FROM categories WHERE id = ?"
-	rows, e1 := r.DB.QueryContext(context.Background(), query, categoryID)
-	if e1 != nil {
-		return nil, e1
+	rows, err1 := r.DB.QueryContext(context.Background(), query, categoryID)
+	if err1 != nil {
+		return nil, err1
 	}
 
 	defer rows.Close()
 	if rows.Next() {
-		category := model.CategoryResponse{}
-		e2 := rows.Scan(
-			&category.ID,
-			&category.CategoryName,
-			&category.CategorySlug,
-			&category.CreatedAt,
-			&category.UpdatedAt,
-			&category.DeletedAt,
+		var id int64
+		var categoryName, categorySlug string
+		var createdAt time.Time
+		var updatedAt, deletedAt sql.NullTime
+		err2 := rows.Scan(
+			&id,
+			&categoryName,
+			&categorySlug,
+			&createdAt,
+			&updatedAt,
+			&deletedAt,
 		)
 
-		if e2 != nil {
-			return nil, e2
+		if err2 != nil {
+			return nil, err2
+		}
+
+		category := model.CategoryResponse{
+			ID:           id,
+			CategoryName: categoryName,
+			CategorySlug: categorySlug,
+			CreatedAt:    createdAt,
+		}
+
+		if updatedAt.Valid {
+			category.UpdatedAt = updatedAt.Time
+		}
+
+		if deletedAt.Valid {
+			category.DeletedAt = deletedAt.Time
 		}
 
 		return &category, nil
@@ -119,59 +181,59 @@ func (r *CategoryRepositoryImpl) FindByID(categoryID int64) (*model.CategoryResp
 	return nil, nil
 }
 
-func (r *CategoryRepositoryImpl) Update(categoryID int64, request *entity.Category) (bool, error) {
+func (r *CategoryRepositoryImpl) Update(categoryID int64, request *entity.Category) error {
 	query := "UPDATE categories SET category_name = ?, category_slug = ? WHERE id = ?"
-	result, e1 := r.DB.ExecContext(context.Background(), query, request.CategoryName, request.CategorySlug, categoryID)
-	if e1 != nil {
-		return false, e1
+	result, err1 := r.DB.ExecContext(context.Background(), query, request.CategoryName, request.CategorySlug, categoryID)
+	if err1 != nil {
+		return err1
 	}
 
-	affected, e2 := result.RowsAffected()
-	if e2 != nil {
-		return false, e2
+	affected, err2 := result.RowsAffected()
+	if err2 != nil {
+		return err2
 	}
 
 	if affected != 1 {
-		return false, errors.New("no category updated")
+		return errors.New("no category updated")
 	}
 
-	return true, nil
+	return nil
 }
 
-func (r *CategoryRepositoryImpl) SoftDelete(categoryID int64) (bool, error) {
+func (r *CategoryRepositoryImpl) SoftDelete(categoryID int64) error {
 	query := "UPDATE categories SET deleted_at = NOW() WHERE id = ?"
 	result, e1 := r.DB.ExecContext(context.Background(), query, categoryID)
 	if e1 != nil {
-		return false, e1
+		return e1
 	}
 
 	affected, e2 := result.RowsAffected()
 	if e2 != nil {
-		return false, e2
+		return e2
 	}
 
 	if affected != 1 {
-		return false, errors.New("no category deleted")
+		return errors.New("no category deleted")
 	}
 
-	return true, nil
+	return nil
 }
 
-func (r *CategoryRepositoryImpl) Delete(categoryID int64) (bool, error) {
+func (r *CategoryRepositoryImpl) Delete(categoryID int64) error {
 	query := "DELETE FROM categories WHERE id = ?"
-	result, e1 := r.DB.ExecContext(context.Background(), query, categoryID)
-	if e1 != nil {
-		return false, e1
+	result, err1 := r.DB.ExecContext(context.Background(), query, categoryID)
+	if err1 != nil {
+		return err1
 	}
 
-	affected, e2 := result.RowsAffected()
-	if e2 != nil {
-		return false, e2
+	affected, err2 := result.RowsAffected()
+	if err2 != nil {
+		return err2
 	}
 
 	if affected != 1 {
-		return false, errors.New("no category deleted")
+		return errors.New("no category deleted")
 	}
 
-	return true, nil
+	return nil
 }
